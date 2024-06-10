@@ -29,11 +29,11 @@ namespace api.Controllers
         }
 
         [HttpGet("{id}")]
-        public IActionResult GetById([FromRoute] int id)
+        public IActionResult GetById([FromRoute] int? id)
         {
             // Find a relic in the db by matching id and return it if it's not null
             Relic? relic = _context.Relics.Find(id);
-            if (relic == null)
+            if (relic == null || id == null)
                 return NotFound();
             return Ok(relic);
         }
