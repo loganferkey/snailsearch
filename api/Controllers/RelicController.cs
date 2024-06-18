@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using api.Data;
+using api.DTO;
+using api.Mappers;
 using api.Models;
 using Microsoft.AspNetCore.Mvc;
 
@@ -22,8 +24,8 @@ namespace api.Controllers
         public IActionResult GetAll() 
         {
             // Grab all of the relics in the db and return them only if it works and is non zero
-            List<Relic>? relics = _context.Relics.ToList();
-            if (relics == null || relics.Count == 0)
+            var relics = _context.Relics.ToList().Select(r => r.ToRelicDto());
+            if (relics == null)
                 return NotFound();
             return Ok(relics);
         }
