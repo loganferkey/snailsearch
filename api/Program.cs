@@ -33,7 +33,6 @@ if (args.Length > 0)
             {
                 IWebScraper scraper = scope.ServiceProvider.GetRequiredService<IWebScraper>();
                 scraper.Seed();
-                scraper.SeedDetail();
             }
         break;
         case "purgedb":

@@ -21,6 +21,7 @@ namespace api.Services
         private readonly string supremeRelicUrl = "https://supersnail.wiki.gg/wiki/Supreme_Relic";
         private readonly string baseWikiLink = "https://supersnail.wiki.gg";
         private readonly string relicImageDir = "images/relics"; 
+        private readonly string sourcesDir = "images/sources"; 
         private readonly string relicSkillDir = "images/relics/skills"; 
         private readonly string baseRelicImgName = "MissingRelic.png"; 
         private readonly string baseRelicSkillImgName = "MissingSkill.png"; 
@@ -81,8 +82,15 @@ namespace api.Services
                     HtmlDocument relicDoc = new HtmlDocument();
                     relicDoc.LoadHtml(relicHtml);
 
+                    // Find all nodes for properties on relic and parse them so format is correct
+                    HtmlNode? baseInfoNode = relicDoc.DocumentNode.SelectSingleNode("/html/body/div[3]/div[2]/div[2]/main/div[3]/div[5]/div[1]/aside"); // Holds name, picture, rank, AFFCT, birthday
+                    HtmlNode? statNodes = relicDoc.DocumentNode.SelectSingleNode(@"//*[@id=""mw-content-text""]/div[1]/table[2]/tbody"); // Table containing all stat stars
+                    HtmlNode? skillHeaderNode = relicDoc.DocumentNode.SelectSingleNode("/html/body/div[3]/div[2]/div[2]/main/div[3]/div[5]/div[1]/h2[3]/span"); // Skill tag above skills
+                    HtmlNode? descriptionHeaderNode = relicDoc.DocumentNode.SelectSingleNode("/html/body/div[3]/div[2]/div[2]/main/div[3]/div[5]/div[1]/h2[6]/span"); // Description tag above description
+                    HtmlNode? sourceHeaderNode = relicDoc.DocumentNode.SelectSingleNode("/html/body/div[3]/div[2]/div[2]/main/div[3]/div[5]/div[1]/h2[1]/span"); // Source tag above all sources
+
                     _consoleUtil.WriteColor($"Parsed {link}", ConsoleColor.Cyan);
-                    return new Relic 
+                    return new Relic
                     {
                     };
                 }
@@ -95,6 +103,8 @@ namespace api.Services
 
             // Await task completion and compare with db relics/save changes to db
             List<Relic?> relics = (await Task.WhenAll(fetchWikiRelics)).Where(r => r != null).ToList();
+
+            // Loop over returned list of relic objects from wiki and compare them with hashmap of db relics, update relics with same name with non matching properties and update db
 
             // Who doesn't like colored console output :D
             _consoleUtil.StopTimer($"Relics => ({newRelic}) new, ({updatedRelic}) updated, ({noChanges}) no changes: [t]ms parse");
