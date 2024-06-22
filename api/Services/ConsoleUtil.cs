@@ -30,7 +30,7 @@ namespace api.Services
         /// <param name="message">Optional: The message you want to print to the terminal when started</param>
         /// <param name="textColor">Optional: The color of the text to be printed</param>
         /// <param name="backgroundColor">Optional: The color behind the text</param>
-        public void StartTimer(string? message, ConsoleColor? textColor, ConsoleColor? backgroundColor)
+        public void StartTimer(string? message = null, ConsoleColor? textColor = null, ConsoleColor? backgroundColor = null)
         {
             if (this.stopwatch.IsRunning)
                 return; // Fail start if the timer is currently running
@@ -54,7 +54,7 @@ namespace api.Services
         /// </summary>
         /// <param name="message">Optional: Print a message that can hold the duration inside of it, see function for help</param>
         /// <returns>Returns the duration of the stopwatch since it was started</returns>
-        public long StopTimer(string? message)
+        public long StopTimer(string? message = null)
         {
             if (!this.stopwatch.IsRunning)
                 return 0; // Wasn't running so no time has passed
@@ -81,6 +81,18 @@ namespace api.Services
             }
 
             return this.stopwatch.ElapsedMilliseconds;
+        }
+
+        /// <summary>
+        /// Write a line in the terminal with provided color
+        /// </summary>
+        /// <param name="message">The message you want to write</param>
+        /// <param name="color">The color it should be in</param>
+        public void WriteColor(string message, ConsoleColor color)
+        {
+            Console.ForegroundColor = color;
+            Console.WriteLine(message);
+            Console.ResetColor();
         }
     }
 }

@@ -12,7 +12,7 @@ builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
-builder.Services.AddScoped<ConsoleUtil>();
+builder.Services.AddTransient<ConsoleUtil>();
 builder.Services.AddScoped<IWebScraper, RelicScraper>();
 builder.Services.AddScoped<IRelicUtil, RelicUtil>();
 builder.Services.AddDbContext<ApplicationDbContext>(options => {

@@ -7,6 +7,6 @@ namespace api.Services
 {
     public interface IRelicUtil
     {
-        
+        public void ScrubEncoding(string field);
     }
 }

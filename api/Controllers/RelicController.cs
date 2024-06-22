@@ -7,6 +7,7 @@ using api.DTO;
 using api.Mappers;
 using api.Models;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 
 namespace api.Controllers
 {
@@ -21,7 +22,7 @@ namespace api.Controllers
         }
 
         [HttpGet]
-        public IActionResult GetAll() 
+        public IActionResult GetRelics() 
         {
             // Grab all of the relics in the db and return them only if it works and is non zero
             var relics = _context.Relics.ToList().Select(r => r.ToRelicDto());
@@ -30,20 +31,22 @@ namespace api.Controllers
             return Ok(relics);
         }
 
-        [HttpGet("{id}")]
-        public IActionResult GetById([FromRoute] int? id)
+        [HttpGet("{keyword}")]
+        public IActionResult GetRelicsByKeyword([FromRoute] string? keyword)
         {
-            // Find a relic in the db by matching id and return it if it's not null
-            Relic? relic = _context.Relics.Find(id);
-            if (relic == null || id == null)
+            // Query relics for matching keywords
+            // TODO: see if I can make something more performance optimized
+            IQueryable<Relic> query = _context.Relics.Where(r => EF.Functions.Like(r.Name, $"%{keyword}%") ||
+                                                   EF.Functions.Like(r.Special, $"%{keyword}%") ||
+                                                   EF.Functions.Like(r.Description, $"%{keyword}%") ||
+                                                   EF.Functions.Like(r.Skill1, $"%{keyword}%") ||
+                                                   EF.Functions.Like(r.Skill2, $"%{keyword}%") ||
+                                                   EF.Functions.Like(r.Skill3, $"%{keyword}%") ||
+                                                   EF.Functions.Like(r.Source, $"%{keyword}%"));
+            IEnumerable<Relic?> result = query.AsNoTracking().ToList();
+            if (!result.Any() || result == null)
                 return NotFound();
-            return Ok(relic);
+            return Ok(result);
         }
-
-        // [HttpGet("{keyword}")]
-        // public IActionResult GetByKeyword([FromRoute] string keyword) 
-        // {
-        //     return Ok(1);
-        // }
     }
 }

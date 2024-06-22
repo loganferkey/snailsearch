@@ -8,7 +8,5 @@ namespace api.Services
     public interface IWebScraper
     {
         void Seed();
-
-        void SeedDetail();
     }
 }
